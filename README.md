@@ -39,11 +39,11 @@ To flash the bootloader using the Windows application of STM32_Programmer, follo
 - Open the STM32_Programmer application and switch to the Erasing & Programming tab from the left menu bar.
 - Connect to the Board using ST-Link and initiate the connection from the application.
 
-  <img src="doc/screenshots/Establishing_connection.png" height="400">
+  <img src="./doc/screenshots/Establishing_connection.png" height="400">
   
 - Browse and select the .srec file for the bootloader inside the build/boot/ folder of your program directory.
  
-    <img src="doc/screenshots/browsing_file.png" height="400">
+    <img src="./doc/screenshots/browsing_file.png" height="400">
   
 - Initiate Start_Programming, and a successfully uploaded message will appear once programming is complete!
 
@@ -61,10 +61,10 @@ To flash the firmware using the MicroBoot GUI tool in Windows, follow these step
 - Connect the board via USB.
 - Open Device Manager, then navigate to the Ports and Comms menu and note down the COMM number the board is connected on.
 - Now open the MicroBoot Application, inside Settings, set it to XCP on RS232 Mode, the Device will have the same COMM port as your Device_manager settings.</br>
-  <img src="doc/screenshots/Microboot_settings.png" height="400">
+  <img src="./doc/screenshots/Microboot_settings.png" height="400">
       
 - Now, browse and select the .srec for firmware inside the build/src/ folder.
-  <img src="doc/screenshots/Microboot_browsing_file.png" height="400">
+  <img src="./doc/screenshots/Microboot_browsing_file.png" height="400">
 
 - Click the reset button to put the board in boot mode, and the firmware will be successfully flashed onto the board!
   
