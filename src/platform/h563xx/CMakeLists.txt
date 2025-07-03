@@ -6,6 +6,7 @@ target_sources(pslab-platform
         usb_ll.c
         startup_stm32h563xx.s
         system_stm32h5xx.c
+        adc_ll.c
 )
 
 target_include_directories(pslab-platform
@@ -21,6 +22,7 @@ target_compile_definitions(pslab-platform
 
 target_link_libraries(pslab-platform
     PRIVATE
+        HAL::STM32::H5::ADCEx
         HAL::STM32::H5::CORTEX
         HAL::STM32::H5::DMAEx
         HAL::STM32::H5::ICACHE
