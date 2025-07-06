@@ -164,13 +164,30 @@ uint32_t ADC_LL_Read(uint32_t *buffer)
     return *buffer; // Return the converted value
 }
 
+static void adc_irq_handler(ADC_HandleTypeDef *hadc)
+{
+    // Check if the ADC conversion is complete
+    if (__HAL_ADC_GET_FLAG(hadc, ADC_FLAG_EOC)) {
+        // Call the conversion complete callback
+        HAL_ADC_ConvCpltCallback(hadc);
+    }
+
+    // Check for any errors
+    if (__HAL_ADC_GET_FLAG(hadc, ADC_FLAG_OVR)) {
+        // Call the error callback
+        HAL_ADC_ErrorCallback(hadc);
+    }
+
+    HAL_ADC_IRQHandler(hadc); // Handle the ADC interrupt
+}
+
 /**
  * @brief ADC interrupt handler.
  */
 void ADC1_IRQHandler(void)
-{
+{   
     // Handle ADC interrupt
-    HAL_ADC_IRQHandler(&hadc);
+    adc_irq_handler(&hadc);    
 }
 
 /**
