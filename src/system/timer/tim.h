@@ -14,6 +14,8 @@
 #define TIM_H
 
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,23 +28,24 @@ typedef struct TIM_Handle TIM_Handle;
 
 /**
  * @brief Initialize the Timer Module
- * 
+ *
  * This function initializes the specified TIM instance with the given frequency
  * and starts it. It allocates a handle for the timer and returns it.
- * 
- * @param tim TIM instance to start 
+ *
+ * @param tim TIM instance to start
  * @param freq Frequency for the timer
  *
- * @return Pointer to TIM_Handle on success, nullptr on failure (including invalid parameters)
+ * @return Pointer to TIM_Handle on success, nullptr on failure (including
+ * invalid parameters)
  */
 TIM_Handle *TIM_Init(size_t tim, uint32_t freq);
 
 /**
  * @brief Stop the Timer Module
- * 
+ *
  * This function stops the specified TIM instance and deinitializes it.
  * It frees the allocated handle for the timer.
- * 
+ *
  * @param handle Pointer to the TIM handle structure
  */
 void TIM_Stop(size_t tim);

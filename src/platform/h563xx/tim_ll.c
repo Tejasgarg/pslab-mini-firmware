@@ -51,8 +51,7 @@ static TimerInstance timer_instances[TIM_NUM_COUNT] = {
  * based on its hardware configuration. It is used to calculate timer values
  * for various operations.
  *
- * @param timer_instance Pointer to the TimerInstance structure containing
- *                       the timer handle.
+ * @param tim The timer count of the timer
  * @return The clock frequency in Hz, or 0 if the timer instance is invalid.
  */
 static uint32_t Get_Timer_Clock_frequency(TIM_Num tim)
@@ -96,7 +95,7 @@ static uint32_t Get_Timer_Clock_frequency(TIM_Num tim)
  * period for the timer. It uses the timer clock frequency to determine the
  * appropriate prescaler and auto-reload values.
  *
- * @param period The desired timer period in milliseconds.
+ * @param tim The timer count of the timer
  */
 static void Calculate_Timer_Values(TIM_Num tim)
 {
@@ -177,7 +176,7 @@ void TIM_LL_Init(TIM_Num tim, uint32_t freq)
 
     HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig);
 
-        instance->initialized = true;
+    instance->initialized = true;
 }
 
 /**

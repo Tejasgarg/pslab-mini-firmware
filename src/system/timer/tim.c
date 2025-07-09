@@ -9,14 +9,15 @@
  * @date 2025-07-07
  */
 
-#include <stddef.h>
 #include "tim.h"
 #include "tim_ll.h"
+#include <stddef.h>
+#include <stdlib.h>
 
 /**
  * @brief Timer handle structure
  */
-struct TIM_Handle{
+struct TIM_Handle {
     TIM_Num tim_id;
     uint32_t freq;
     bool initialised;
@@ -28,7 +29,8 @@ static TIM_Handle *active_timers[TIM_NUM_COUNT] = { nullptr };
 /**
  * @brief Start the Timer Module
  *
- * This function initializes the specified TIM instance with the given frequency and starts it.
+ * This function initializes the specified TIM instance with the given frequency
+ * and starts it.
  *
  * @param tim TIM instance to start
  */

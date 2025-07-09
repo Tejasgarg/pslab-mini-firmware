@@ -51,7 +51,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
     // Enable ADC1 interrupt
     HAL_NVIC_SetPriority(ADC1_IRQn, ADC_IRQ_PRIORITY, 0);
     HAL_NVIC_EnableIRQ(ADC1_IRQn);
-
 }
 
 /**
@@ -66,7 +65,8 @@ void ADC_LL_init(void)
 {
     // Initialize the ADC peripheral
     hadc.Instance = ADC1;
-    hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV1; // ADC clock and prescaler
+    hadc.Init.ClockPrescaler =
+        ADC_CLOCK_SYNC_PCLK_DIV1; // ADC clock and prescaler
     hadc.Init.Resolution = ADC_RESOLUTION_12B;
     hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
     hadc.Init.ScanConvMode = DISABLE;
@@ -135,7 +135,7 @@ void ADC_LL_stop(void)
 uint32_t ADC_LL_read(uint32_t *buffer)
 {
     // Start the ADC conversion
-    ADC_LL_Start(void);
+    ADC_LL_start();
 
     HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
 
