@@ -24,6 +24,8 @@ typedef enum {
     UART_BUS_COUNT = 3
 } UART_Bus;
 
+//
+
 /**
  * @brief Initialize the UART peripheral and start DMA-based reception.
  *
