@@ -93,7 +93,10 @@ void ADC_LL_init(void)
     s_config.Offset = 0;
     HAL_ADC_ConfigChannel(&hadc, &s_config);
 
-    HAL_ADCEx_Calibration_Start(&hadc, ADC_SINGLE_ENDED); // Calibration
+    // Calibration with error handling
+    if (HAL_ADCEx_Calibration_Start(&hadc, ADC_SINGLE_ENDED) != HAL_OK) {
+        return;
+    }; // Calibration
 }
 
 /**
@@ -146,3 +149,8 @@ uint32_t ADC_LL_read(uint32_t *buffer)
 
     return *buffer; // Return the converted value
 }
+
+/**
+ * @brief ADC interrupt handler
+ */
+void ADC1_IRQHandler(void) { HAL_ADC_IRQHandler(&hadc); }
