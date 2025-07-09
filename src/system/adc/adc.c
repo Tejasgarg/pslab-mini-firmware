@@ -15,7 +15,7 @@
 
 #include "adc.h"
 #include "adc_ll.h"
-#include "tim.h"
+#include "../timer/tim.h"
 
 /**********************************************************************
  * Macros
