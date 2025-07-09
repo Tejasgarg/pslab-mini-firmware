@@ -165,7 +165,7 @@ void TIM_LL_Init(TIM_Num tim, uint32_t freq)
     instance->htim->Init.CounterMode = TIM_COUNTERMODE_UP;
     instance->htim->Init.Period = instance->period;
     instance->htim->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    instance->htim->Init.AutoReloadPreload = TIM_AUTOMATICOUTPUT_DISABLE;
+    instance->htim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 
     HAL_TIM_Base_Init(instance->htim);
 
@@ -174,7 +174,7 @@ void TIM_LL_Init(TIM_Num tim, uint32_t freq)
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 
-    HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig);
+    HAL_TIMEx_MasterConfigSynchronization(instance->htim, &sMasterConfig);
 
     instance->initialized = true;
 }
@@ -219,7 +219,7 @@ void TIM_LL_Start(TIM_Num tim, uint32_t freq)
  */
 void TIM_LL_Stop(TIM_Num tim)
 {
-    TIM_LL_deinit(tim);
     TimerInstance *instance = &timer_instances[tim];
     HAL_TIM_Base_Stop(instance->htim);
+    TIM_LL_deinit(tim);
 }
