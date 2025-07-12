@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - main
+      - fix_tests1
+
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

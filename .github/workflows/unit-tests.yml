@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+      - fix_tests1
 
 jobs:
   unit-tests:
