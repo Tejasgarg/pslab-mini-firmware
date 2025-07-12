@@ -11,7 +11,7 @@
 
 #include "tim.h"
 #include "../logging.h"
-#include "../util/error.h"
+#include "error.h"
 #include "tim_ll.h"
 #include <stddef.h>
 #include <stdlib.h>
