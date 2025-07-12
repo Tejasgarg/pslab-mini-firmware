@@ -13,6 +13,7 @@
 
 #include "stm32h5xx_hal.h"
 
+#include "logging_ll.h"
 #include "error.h"
 #include "platform.h"
 #include "tim_ll.h"
@@ -227,7 +228,6 @@ void TIM_LL_deinit(TIM_Num tim)
  */
 void TIM_LL_start(TIM_Num tim, uint32_t freq)
 {
-    TIM_LL_init(tim, freq);
     TimerInstance *instance = &g_timer_instances[tim];
     if (HAL_TIM_Base_Start(instance->htim) != HAL_OK){
         THROW(ERROR_HARDWARE_FAULT);
@@ -247,5 +247,4 @@ void TIM_LL_stop(TIM_Num tim)
         THROW(ERROR_HARDWARE_FAULT);
             return;
     }
-    TIM_LL_deinit(tim);
 }

@@ -9,6 +9,7 @@
  * @date 2025-07-07
  */
 
+#include "logging.h"
 #include "tim.h"
 #include "tim_ll.h"
 #include "error.h"
@@ -47,8 +48,6 @@ TIM_Handle *TIM_init(size_t tim, uint32_t freq)
         return nullptr; // timer already started
     }
 
-    TIM_LL_start(tim, freq);
-
     TIM_Handle *handle = malloc(sizeof(TIM_Handle));
     if (handle == nullptr) {
         return nullptr; // Memory allocation failed
@@ -60,7 +59,32 @@ TIM_Handle *TIM_init(size_t tim, uint32_t freq)
 
     g_active_timers[tim] = handle;
 
+    LOG_INFO("Initializing TIM instance");
     return handle;
+}
+
+/**
+ * @brief Start the Timer Module
+ *
+ * This function starts the specified TIM instance.
+ *
+ * @param tim TIM instance to start
+ * @param freq Frequency to set for the timer
+ */
+void TIM_start(size_t tim, uint32_t freq)
+{
+    if (tim >= TIM_NUM_COUNT) {
+        THROW(ERROR_INVALID_ARGUMENT);
+        return;
+    }
+
+    if (g_active_timers[tim] == nullptr) {
+        THROW(ERROR_INVALID_ARGUMENT);
+        return;
+    }
+
+    TIM_LL_start((TIM_Num)tim, freq);
+    LOG_INFO("Starting TIM instance");
 }
 
 /**

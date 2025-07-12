@@ -16,14 +16,19 @@
 
 #include "stm32h5xx_hal.h"
 
+#include "logging_ll.h"
 #include "adc_ll.h"
 #include "error.h"
 
-enum { ADC_IRQ_PRIORITY = 2 }; // ADC interrupt priority
+enum { ADC_IRQ_PRIORITY = 0 }; // ADC interrupt priority
 
 static ADC_HandleTypeDef g_hadc = { nullptr };
 
 static ADC_ChannelConfTypeDef g_config = { 0 };
+
+static ADC_LL_CompleteCallback adc_complete_callback = NULL;
+
+
 
 /**
  * @brief Initializes the ADC MSP (MCU Support Package).
@@ -64,6 +69,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
  */
 void ADC_LL_init(void)
 {
+
     // Initialize the ADC peripheral
     g_hadc.Instance = ADC1;
     g_hadc.Init.ClockPrescaler =
@@ -101,7 +107,9 @@ void ADC_LL_init(void)
     // Calibration with error handling
     if (HAL_ADCEx_Calibration_Start(&g_hadc, ADC_SINGLE_ENDED) != HAL_OK) {
         THROW(ERROR_HARDWARE_FAULT);
-    }; // Calibration
+    } // Calibration
+    LOG_LL_INFO("ADC configured with external trigger T6_TRGO");
+
 }
 
 /**
@@ -146,28 +154,19 @@ void ADC_LL_stop(void)
     }
 }
 
-uint32_t ADC_LL_read(uint32_t *buffer)
+void ADC_LL_set_complete_callback(ADC_LL_CompleteCallback callback)
 {
-    // Start the ADC conversion
-    if (HAL_ADC_Start(&g_hadc) != HAL_OK) {
-        THROW(ERROR_HARDWARE_FAULT);
-    }
-
-    if (HAL_ADC_PollForConversion(&g_hadc, HAL_MAX_DELAY) != HAL_OK) {
-        THROW(ERROR_TIMEOUT);
-    }
-
-    // Read the converted value
-    *buffer = HAL_ADC_GetValue(&g_hadc);
-
-    if (HAL_ADC_Stop(&g_hadc) != HAL_OK) {
-        THROW(ERROR_HARDWARE_FAULT);
-    }
-
-    return *buffer; // Return the converted value
+    adc_complete_callback = callback; // Set the user-defined callback
 }
 
-/**
- * @brief ADC interrupt handler
- */
-void ADC1_IRQHandler(void) { HAL_ADC_IRQHandler(&g_hadc); }
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+        (void)hadc; // Suppress unused parameter warning
+        uint32_t value = HAL_ADC_GetValue(&g_hadc);
+        if (adc_complete_callback != nullptr) {
+            adc_complete_callback(value); // Call the user-defined callback with the ADC value
+        }
+}
+
+void ADC1_IRQHandler(void){ HAL_ADC_IRQHandler(&g_hadc); }
+

@@ -41,6 +41,18 @@ typedef struct TIM_Handle TIM_Handle;
 TIM_Handle *TIM_init(size_t tim, uint32_t freq);
 
 /**
+ * @brief Start the Timer Module
+ *
+ * This function starts the specified TIM instance with the given frequency.
+ * It must be called after TIM_init to start the timer.
+ *
+ * @param tim TIM instance to start
+ * @param freq Frequency for the timer
+ */
+void TIM_start(size_t tim, uint32_t freq);
+
+
+/**
  * @brief Stop the Timer Module
  *
  * This function stops the specified TIM instance and deinitializes it.
