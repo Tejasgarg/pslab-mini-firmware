@@ -65,7 +65,8 @@ void ADC_start(void);
 void ADC_stop(void);
 
 /**
- * @brief Sets the callback function to be called when an ADC conversion is complete.
+ * @brief Sets the callback function to be called when an ADC conversion is
+ * complete.
  *
  * This function allows the user to set a callback that will be invoked
  * when an ADC conversion is complete. The callback will receive the converted
@@ -74,7 +75,6 @@ void ADC_stop(void);
  * @param callback Pointer to the callback function to be set.
  */
 void ADC_set_complete_callback(ADC_CompleteCallback callback);
-
 
 #ifdef __cplusplus
 }

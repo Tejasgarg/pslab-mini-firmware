@@ -46,7 +46,8 @@ void ADC_LL_start(void);
 void ADC_LL_stop(void);
 
 /**
- * @brief Sets the callback function to be called when an ADC conversion is complete.
+ * @brief Sets the callback function to be called when an ADC conversion is
+ * complete.
  *
  * This function allows the user to set a callback that will be invoked
  * when an ADC conversion is complete.
@@ -54,6 +55,5 @@ void ADC_LL_stop(void);
  * @param callback Pointer to the callback function to be set.
  */
 void ADC_LL_set_complete_callback(ADC_LL_CompleteCallback callback);
-
 
 #endif // ADC_LL_H

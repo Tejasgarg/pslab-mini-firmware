@@ -9,10 +9,10 @@
  * @date 2025-07-07
  */
 
-#include "logging.h"
 #include "tim.h"
-#include "tim_ll.h"
 #include "error.h"
+#include "logging.h"
+#include "tim_ll.h"
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -38,11 +38,11 @@ static TIM_Handle *g_active_timers[TIM_NUM_COUNT] = { nullptr };
  */
 TIM_Handle *TIM_init(size_t tim, uint32_t freq)
 {
-    if (tim >= TIM_NUM_COUNT ){
+    if (tim >= TIM_NUM_COUNT) {
         THROW(ERROR_INVALID_ARGUMENT);
-        return nullptr; //Invalid timer 
+        return nullptr; // Invalid timer
     }
-    
+
     if (g_active_timers[tim] != nullptr) {
         THROW(ERROR_RESOURCE_BUSY);
         return nullptr; // timer already started
@@ -96,12 +96,12 @@ void TIM_start(size_t tim, uint32_t freq)
  */
 void TIM_stop(size_t tim)
 {
-    if (tim >= TIM_NUM_COUNT ){
+    if (tim >= TIM_NUM_COUNT) {
         THROW(ERROR_INVALID_ARGUMENT);
         return;
     }
-    
-    if(g_active_timers[tim] == nullptr) {
+
+    if (g_active_timers[tim] == nullptr) {
         return; // Invalid timer or not started
     }
 
