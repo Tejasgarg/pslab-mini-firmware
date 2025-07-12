@@ -13,6 +13,7 @@
 
 #include "stm32h5xx_hal.h"
 
+#include "error.h"
 #include "platform.h"
 #include "tim_ll.h"
 #include <stdbool.h>
@@ -29,17 +30,17 @@ typedef struct {
 } TimerInstance;
 
 /*TImer Handle initialization*/
-static TIM_HandleTypeDef htim6 = { nullptr };
-static TIM_HandleTypeDef htim7 = { nullptr };
+static TIM_HandleTypeDef g_htim6 = { nullptr };
+static TIM_HandleTypeDef g_htim7 = { nullptr };
 
 /*Array of Timer Instances*/
-static TimerInstance timer_instances[TIM_NUM_COUNT] = {
+static TimerInstance g_timer_instances[TIM_NUM_COUNT] = {
     [TIM_NUM_0] = {
-        .htim = &htim6,
+        .htim = &g_htim6,
         .initialized = false,
     },
     [TIM_NUM_1] = {
-        .htim = &htim7,
+        .htim = &g_htim7,
         .initialized = false,
     },
 };
@@ -57,7 +58,7 @@ static TimerInstance timer_instances[TIM_NUM_COUNT] = {
 static uint32_t Get_Timer_Clock_frequency(TIM_Num tim)
 {
 
-    TimerInstance *instance = &timer_instances[tim];
+    TimerInstance *instance = &g_timer_instances[tim];
 
     PLATFORM_PeripheralClock clock_type;
 
@@ -99,9 +100,10 @@ static uint32_t Get_Timer_Clock_frequency(TIM_Num tim)
  */
 static void Calculate_Timer_Values(TIM_Num tim)
 {
-    TimerInstance *instance = &timer_instances[tim];
+    TimerInstance *instance = &g_timer_instances[tim];
     if (instance->frequency == 0) {
         // frequency should not be zero
+        THROW(ERROR_INVALID_ARGUMENT);
         return;
     }
 
@@ -109,6 +111,7 @@ static void Calculate_Timer_Values(TIM_Num tim)
 
     if (tim_clock == 0) {
         // Invalid timer clock frequency
+        THROW(ERROR_INVALID_ARGUMENT);
         return;
     }
 
@@ -146,11 +149,17 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
  */
 void TIM_LL_init(TIM_Num tim, uint32_t freq)
 {
-    if (tim >= TIM_NUM_COUNT || timer_instances[tim].initialized) {
+    if (tim >= TIM_NUM_COUNT) {
+        THROW(ERROR_INVALID_ARGUMENT);
         return;
     }
 
-    TimerInstance *instance = &timer_instances[tim];
+    if (g_timer_instances[tim].initialized){
+        THROW(ERROR_RESOURCE_BUSY);
+        return;
+    }
+
+    TimerInstance *instance = &g_timer_instances[tim];
 
     instance->frequency = freq;
     Calculate_Timer_Values(tim);
@@ -167,14 +176,20 @@ void TIM_LL_init(TIM_Num tim, uint32_t freq)
     instance->htim->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     instance->htim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 
-    HAL_TIM_Base_Init(instance->htim);
+    if(HAL_TIM_Base_Init(instance->htim) != HAL_OK){
+        THROW(ERROR_HARDWARE_FAULT);
+        return;
+    }
 
     TIM_MasterConfigTypeDef sMasterConfig = { 0 };
 
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 
-    HAL_TIMEx_MasterConfigSynchronization(instance->htim, &sMasterConfig);
+    if (HAL_TIMEx_MasterConfigSynchronization(instance->htim, &sMasterConfig) != HAL_OK){
+        THROW(ERROR_HARDWARE_FAULT);
+        return;
+    }
 
     instance->initialized = true;
 }
@@ -186,11 +201,16 @@ void TIM_LL_init(TIM_Num tim, uint32_t freq)
  */
 void TIM_LL_deinit(TIM_Num tim)
 {
-    if (tim >= TIM_NUM_COUNT || !timer_instances[tim].initialized) {
+    if (tim >= TIM_NUM_COUNT) {
+        THROW(ERROR_INVALID_ARGUMENT);
         return;
     }
 
-    TimerInstance *instance = &timer_instances[tim];
+    if (!g_timer_instances[tim].initialized){
+        return;
+    }
+
+    TimerInstance *instance = &g_timer_instances[tim];
 
     HAL_TIM_Base_DeInit(instance->htim);
 
@@ -208,8 +228,11 @@ void TIM_LL_deinit(TIM_Num tim)
 void TIM_LL_start(TIM_Num tim, uint32_t freq)
 {
     TIM_LL_init(tim, freq);
-    TimerInstance *instance = &timer_instances[tim];
-    HAL_TIM_Base_Start(instance->htim);
+    TimerInstance *instance = &g_timer_instances[tim];
+    if (HAL_TIM_Base_Start(instance->htim) != HAL_OK){
+        THROW(ERROR_HARDWARE_FAULT);
+        return;
+    }
 }
 
 /**
@@ -219,7 +242,10 @@ void TIM_LL_start(TIM_Num tim, uint32_t freq)
  */
 void TIM_LL_stop(TIM_Num tim)
 {
-    TimerInstance *instance = &timer_instances[tim];
-    HAL_TIM_Base_Stop(instance->htim);
+    TimerInstance *instance = &g_timer_instances[tim];
+    if (HAL_TIM_Base_Stop(instance->htim) != HAL_OK){
+        THROW(ERROR_HARDWARE_FAULT);
+            return;
+    }
     TIM_LL_deinit(tim);
 }

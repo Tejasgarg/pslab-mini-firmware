@@ -11,6 +11,7 @@
 
 #include "tim.h"
 #include "tim_ll.h"
+#include "error.h"
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -24,7 +25,7 @@ struct TIM_Handle {
 };
 
 // Array to keep track of active timers
-static TIM_Handle *active_timers[TIM_NUM_COUNT] = { nullptr };
+static TIM_Handle *g_active_timers[TIM_NUM_COUNT] = { nullptr };
 
 /**
  * @brief Start the Timer Module
@@ -36,8 +37,14 @@ static TIM_Handle *active_timers[TIM_NUM_COUNT] = { nullptr };
  */
 TIM_Handle *TIM_init(size_t tim, uint32_t freq)
 {
-    if (tim >= TIM_NUM_COUNT || active_timers[tim] != nullptr) {
-        return nullptr; // Invalid timer or already started
+    if (tim >= TIM_NUM_COUNT ){
+        THROW(ERROR_INVALID_ARGUMENT);
+        return nullptr; //Invalid timer 
+    }
+    
+    if (g_active_timers[tim] != nullptr) {
+        THROW(ERROR_RESOURCE_BUSY);
+        return nullptr; // timer already started
     }
 
     TIM_LL_start(tim, freq);
@@ -51,7 +58,7 @@ TIM_Handle *TIM_init(size_t tim, uint32_t freq)
     handle->freq = freq;
     handle->initialised = true;
 
-    active_timers[tim] = handle;
+    g_active_timers[tim] = handle;
 
     return handle;
 }
@@ -65,13 +72,18 @@ TIM_Handle *TIM_init(size_t tim, uint32_t freq)
  */
 void TIM_stop(size_t tim)
 {
-    if (tim >= TIM_NUM_COUNT || active_timers[tim] == nullptr) {
+    if (tim >= TIM_NUM_COUNT ){
+        THROW(ERROR_INVALID_ARGUMENT);
+        return;
+    }
+    
+    if(g_active_timers[tim] == nullptr) {
         return; // Invalid timer or not started
     }
 
     TIM_LL_stop((TIM_Num)tim);
-    active_timers[tim]->initialised = false;
-    active_timers[tim]->freq = 0;
-    free(active_timers[tim]);
-    active_timers[tim] = nullptr;
+    g_active_timers[tim]->initialised = false;
+    g_active_timers[tim]->freq = 0;
+    free(g_active_timers[tim]);
+    g_active_timers[tim] = nullptr;
 }
