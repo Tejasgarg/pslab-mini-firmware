@@ -32,6 +32,9 @@ enum { RX_BUFFER_SIZE = 256 };
 static uint8_t usb_rx_buffer_data[RX_BUFFER_SIZE] = { 0 };
 static bool usb_service_requested = false;
 
+uint32_t volatile latest_adc_value = 0;
+bool volatile adc_data_ready = false;
+
 /*****************************************************************************
  * Static prototypes
  ******************************************************************************/
@@ -45,6 +48,12 @@ void usb_cb(USB_Handle *husb, uint32_t bytes_available)
     (void)husb;
     (void)bytes_available;
     usb_service_requested = true;
+}
+
+static void g_adc_callback(uint32_t value)
+{
+    latest_adc_value = value; // Store the latest ADC value
+    adc_data_ready = true; // Set a flag to indicate new data is ready
 }
 
 int main(void) // NOLINT
@@ -77,10 +86,22 @@ int main(void) // NOLINT
     USB_Handle *husb = USB_init(0, &usb_rx_buf);
 
     USB_set_rx_callback(husb, usb_cb, CB_THRESHOLD);
-
     // Initialize ADC
     ADC_init();
-
+    ADC_set_complete_callback(g_adc_callback);
+    ADC_start(); // Start ADC conversions
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
+    LOG_INFO("THIS IS TEST LINE");
     /* Basic USB/LED example:
      * - Process incoming bytes when USB callback is triggered
      * - If a byte is received, toggle the LED
@@ -90,14 +111,13 @@ int main(void) // NOLINT
      */
     while (1) {
         USB_task(husb);
-
         // Read low-level logs
         LOG_service_platform();
 
-        // Log system status periodically (optional)
-        static uint32_t log_counter = 0;
-        if (++log_counter % 1000000 == 0) {
-            LOG_INFO("System running, USB active");
+        if (adc_data_ready) {
+            adc_data_ready = false; // Reset flag
+            LED_toggle(); // Toggle LED to indicate ADC data ready
+            LOG_INFO("ADC Value: %lu", latest_adc_value); // Log the ADC value
         }
 
         if (usb_service_requested) {
