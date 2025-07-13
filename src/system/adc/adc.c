@@ -13,11 +13,11 @@
 
 #include <stdint.h>
 
-#include "logging.h"
 #include "../timer/tim.h"
 #include "adc.h"
 #include "adc_ll.h"
 #include "error.h"
+#include "logging.h"
 
 /**********************************************************************
  * Macros
@@ -26,7 +26,8 @@
 enum { ADC1_TIM = 0 }; // Timer used for ADC1 conversions
 enum { ADC1_TIM_Frequency = 25000 }; // ADC1 timer frequency in Hz
 
-static ADC_CompleteCallback g_adc_callback = nullptr; // Callback for ADC completion
+static volatile ADC_CompleteCallback g_adc_callback =
+    nullptr; // Callback for ADC completion
 
 void ADC_set_complete_callback(ADC_CompleteCallback callback)
 {
@@ -35,12 +36,14 @@ void ADC_set_complete_callback(ADC_CompleteCallback callback)
     } else {
         g_adc_callback = NULL; // Clear the ADC complete callback
     }
+    LOG_INFO("ADC_set_complete_started_successfully");
 }
 
 static void adc_complete_callback(uint32_t value)
 {
     if (g_adc_callback) {
-        g_adc_callback(value); // Call the user-defined callback with the ADC value
+        g_adc_callback(value
+        ); // Call the user-defined callback with the ADC value
     }
 }
 
@@ -108,7 +111,9 @@ void ADC_start(void)
     // Start the ADC conversion
     ADC_LL_start();
 
-    TIM_start(ADC1_TIM, ADC1_TIM_Frequency); // Start the timer for ADC conversions
+    TIM_start(
+        ADC1_TIM, ADC1_TIM_Frequency
+    ); // Start the timer for ADC conversions
     LOG_INFO("ADC started with timer frequency %d Hz", ADC1_TIM_Frequency);
 }
 
@@ -126,3 +131,6 @@ void ADC_stop(void)
     ADC_LL_stop();
 }
 
+void Delay(void){
+    LL_Delay();
+}

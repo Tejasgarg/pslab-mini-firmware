@@ -13,8 +13,8 @@
 
 #include "stm32h5xx_hal.h"
 
-#include "logging_ll.h"
 #include "error.h"
+#include "logging_ll.h"
 #include "platform.h"
 #include "tim_ll.h"
 #include <stdbool.h>
@@ -155,7 +155,7 @@ void TIM_LL_init(TIM_Num tim, uint32_t freq)
         return;
     }
 
-    if (g_timer_instances[tim].initialized){
+    if (g_timer_instances[tim].initialized) {
         THROW(ERROR_RESOURCE_BUSY);
         return;
     }
@@ -177,7 +177,7 @@ void TIM_LL_init(TIM_Num tim, uint32_t freq)
     instance->htim->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     instance->htim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 
-    if(HAL_TIM_Base_Init(instance->htim) != HAL_OK){
+    if (HAL_TIM_Base_Init(instance->htim) != HAL_OK) {
         THROW(ERROR_HARDWARE_FAULT);
         return;
     }
@@ -187,7 +187,8 @@ void TIM_LL_init(TIM_Num tim, uint32_t freq)
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 
-    if (HAL_TIMEx_MasterConfigSynchronization(instance->htim, &sMasterConfig) != HAL_OK){
+    if (HAL_TIMEx_MasterConfigSynchronization(instance->htim, &sMasterConfig) !=
+        HAL_OK) {
         THROW(ERROR_HARDWARE_FAULT);
         return;
     }
@@ -207,7 +208,7 @@ void TIM_LL_deinit(TIM_Num tim)
         return;
     }
 
-    if (!g_timer_instances[tim].initialized){
+    if (!g_timer_instances[tim].initialized) {
         return;
     }
 
@@ -229,7 +230,7 @@ void TIM_LL_deinit(TIM_Num tim)
 void TIM_LL_start(TIM_Num tim, uint32_t freq)
 {
     TimerInstance *instance = &g_timer_instances[tim];
-    if (HAL_TIM_Base_Start(instance->htim) != HAL_OK){
+    if (HAL_TIM_Base_Start(instance->htim) != HAL_OK) {
         THROW(ERROR_HARDWARE_FAULT);
         return;
     }
@@ -243,8 +244,8 @@ void TIM_LL_start(TIM_Num tim, uint32_t freq)
 void TIM_LL_stop(TIM_Num tim)
 {
     TimerInstance *instance = &g_timer_instances[tim];
-    if (HAL_TIM_Base_Stop(instance->htim) != HAL_OK){
+    if (HAL_TIM_Base_Stop(instance->htim) != HAL_OK) {
         THROW(ERROR_HARDWARE_FAULT);
-            return;
+        return;
     }
 }

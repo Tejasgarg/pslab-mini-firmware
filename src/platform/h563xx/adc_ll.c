@@ -16,9 +16,9 @@
 
 #include "stm32h5xx_hal.h"
 
-#include "logging_ll.h"
 #include "adc_ll.h"
 #include "error.h"
+#include "logging_ll.h"
 
 enum { ADC_IRQ_PRIORITY = 0 }; // ADC interrupt priority
 
@@ -26,9 +26,7 @@ static ADC_HandleTypeDef g_hadc = { nullptr };
 
 static ADC_ChannelConfTypeDef g_config = { 0 };
 
-static ADC_LL_CompleteCallback adc_complete_callback = NULL;
-
-
+static volatile ADC_LL_CompleteCallback adc_complete_callback = NULL;
 
 /**
  * @brief Initializes the ADC MSP (MCU Support Package).
@@ -108,8 +106,6 @@ void ADC_LL_init(void)
     if (HAL_ADCEx_Calibration_Start(&g_hadc, ADC_SINGLE_ENDED) != HAL_OK) {
         THROW(ERROR_HARDWARE_FAULT);
     } // Calibration
-    LOG_LL_INFO("ADC configured with external trigger T6_TRGO");
-
 }
 
 /**
@@ -161,12 +157,16 @@ void ADC_LL_set_complete_callback(ADC_LL_CompleteCallback callback)
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
-        (void)hadc; // Suppress unused parameter warning
-        uint32_t value = HAL_ADC_GetValue(&g_hadc);
-        if (adc_complete_callback != nullptr) {
-            adc_complete_callback(value); // Call the user-defined callback with the ADC value
-        }
+    (void)hadc; // Suppress unused parameter warning
+    uint32_t value = HAL_ADC_GetValue(&g_hadc);
+    if (adc_complete_callback != nullptr) {
+        adc_complete_callback(value
+        ); // Call the user-defined callback with the ADC value
+    }
 }
 
-void ADC1_IRQHandler(void){ HAL_ADC_IRQHandler(&g_hadc); }
+void ADC1_IRQHandler(void) { HAL_ADC_IRQHandler(&g_hadc); }
 
+void LL_Delay(Void){
+    HAL_Delay(10);
+}
