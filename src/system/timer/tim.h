@@ -35,10 +35,8 @@ typedef struct TIM_Handle TIM_Handle;
  * @param tim TIM instance to start
  * @param freq Frequency for the timer
  *
- * @return Pointer to TIM_Handle on success, nullptr on failure (including
- * invalid parameters)
  */
-TIM_Handle *TIM_init(size_t tim, uint32_t freq);
+void *TIM_init(size_t tim, uint32_t freq);
 
 /**
  * @brief Start the Timer Module

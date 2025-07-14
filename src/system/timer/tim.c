@@ -11,7 +11,7 @@
 
 #include "tim.h"
 #include "error.h"
-#include "logging.h"
+#include "../logging.h"
 #include "tim_ll.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -35,8 +35,9 @@ static TIM_Handle *g_active_timers[TIM_NUM_COUNT] = { nullptr };
  * and starts it.
  *
  * @param tim TIM instance to start
+ * @param freq The frequency of the timer
  */
-TIM_Handle *TIM_init(size_t tim, uint32_t freq)
+void *TIM_init(size_t tim, uint32_t freq)
 {
     if (tim >= TIM_NUM_COUNT) {
         THROW(ERROR_INVALID_ARGUMENT);
@@ -60,7 +61,7 @@ TIM_Handle *TIM_init(size_t tim, uint32_t freq)
     g_active_timers[tim] = handle;
 
     TIM_LL_init((TIM_Num)tim, freq);
-    return handle;
+    return;
 }
 
 /**

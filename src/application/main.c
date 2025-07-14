@@ -90,18 +90,6 @@ int main(void) // NOLINT
     ADC_init();
     ADC_set_complete_callback(g_adc_callback);
     ADC_start(); // Start ADC conversions
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
-    LOG_INFO("THIS IS TEST LINE");
     /* Basic USB/LED example:
      * - Process incoming bytes when USB callback is triggered
      * - If a byte is received, toggle the LED

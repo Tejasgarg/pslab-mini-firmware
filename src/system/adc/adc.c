@@ -17,7 +17,7 @@
 #include "adc.h"
 #include "adc_ll.h"
 #include "error.h"
-#include "logging.h"
+#include "../logging.h"
 
 /**********************************************************************
  * Macros
